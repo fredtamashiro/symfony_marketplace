@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Admin\User;
 use App\Form\RegistrationFormType;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
+    #[Route('/admin/register', name: 'app_admin_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
@@ -32,10 +32,10 @@ class RegistrationController extends AbstractController
 
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('app_admin_login');
+            return $this->redirectToRoute('app_admin_home');
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('admin/registration/register.html.twig', [
             'registrationForm' => $form,
         ]);
     }
