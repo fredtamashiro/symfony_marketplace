@@ -1,42 +1,42 @@
-# filepath: /c:/www/symfony/symfony_marketplace/.github/workflows/main.yml
-name: CI/CD Pipeline
+# # filepath: /c:/www/symfony/symfony_marketplace/.github/workflows/main.yml
+# name: CI/CD Pipeline
 
-on:
-  push:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout código
+#         uses: actions/checkout@v3
 
-      - name: Configurar PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, intl, pdo, pdo_mysql
+#       - name: Configurar PHP
+#         uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: '8.2'
+#           extensions: mbstring, intl, pdo, pdo_mysql
 
-  deploy-desenvolvimento:
-    runs-on: ubuntu-latest
-    environment: 
-      name: desenvolvimento
-      url: https://marketplace.fredtamashiro.com.br
-    needs: build
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v3
+#   deploy-desenvolvimento:
+#     runs-on: ubuntu-latest
+#     environment: 
+#       name: desenvolvimento
+#       url: https://marketplace.fredtamashiro.com.br
+#     needs: build
+#     steps:
+#       - name: Checkout código
+#         uses: actions/checkout@v3
 
-      - name: Configurar SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#       - name: Configurar SSH
+#         uses: webfactory/ssh-agent@v0.5.3
+#         with:
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy para HostGator
-        run: |
-          rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@${{ secrets.HOST }}:/marketplace
-          ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
-          ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
+#       - name: Deploy para HostGator
+#         run: |
+#           rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@${{ secrets.HOST }}:/marketplace
+#           ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
+#           ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
