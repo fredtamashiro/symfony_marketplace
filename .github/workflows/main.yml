@@ -20,19 +20,29 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, intl, pdo, pdo_mysql
 
-      - name: Instalar dependências do Composer
-        run: composer install --no-dev --optimize-autoloader
+      # - name: Instalar dependências do Composer
+      #   run: composer install --no-dev --optimize-autoloader
 
-      - name: Build frontend (opcional)
-        run: |
-          if [ -f package.json ]; then
-            npm install && npm run build
-          fi
-
-      - name: Deploy para HostGator
-        env:
+      # - name: Build frontend (opcional)
+      #   run: |
+      #     if [ -f package.json ]; then
+      #       npm install && npm run build
+      #     fi
+  deploy-desenvolvimento:
+    runs-on: ubuntu-latest
+    environment: 
+      name: desenvolvimento
+      url: https://marketplace.fredtamashiro.com.br
+    needs: build
+    steps:
+      - name: Hostgator Deploy
+        uses: easingthemes/ssh-deploy@v2
+        with:
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_PORT: 2222
+          REMOTE_USER: ${{ secrets.SSH_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@hostgator:/path/to/your/project
-          ssh user@hostgator 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
-          ssh user@hostgator 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
+          ARGS: "-rlgoDzvc --delete"
+          SOURCE: "/"
+          TARGET: "/public_html/marketplace"
+          EXCLUDE: ".git*"
