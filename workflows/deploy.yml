@@ -1,0 +1,46 @@
+name: Deploy Symfony
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo, pdo_mysql
+
+      - name: Instalar dependências do Composer
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Build frontend (opcional)
+        run: |
+          if [ -f package.json ]; then
+            npm install && npm run build
+          fi
+
+      - name: Deploy para HostGator
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          USER: ${{ secrets.USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no $USER@$HOST "
+            cd ~/meu-projeto &&
+            git pull origin main &&
+            composer install --no-dev --optimize-autoloader &&
+            php bin/console cache:clear --env=prod &&
+            php bin/console doctrine:migrations:migrate --no-interaction
+          "

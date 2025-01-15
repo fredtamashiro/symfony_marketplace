@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
-    #[Route('/admin/login', name: 'app_admin_login')]
+    #[Route(['/admin/login','/admin'], name: 'app_admin_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError(); // busca erros de autenticacao
@@ -20,5 +20,11 @@ class LoginController extends AbstractController
             'last_username' => $last_username,
             'error' => $error
         ]);
+    }
+
+    #[Route('/admin/logout', name: 'app_admin_logout')]
+    public function logout()
+    {
+        throw new \Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
     }
 }
