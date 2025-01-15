@@ -46,6 +46,6 @@ jobs:
 
       - name: Deploy para HostGator
         run: |
-          rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@${{ secrets.REMOTE_HOST }}:/path/to/your/project
-          ssh user@${{ secrets.REMOTE_HOST }} 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
-          ssh user@${{ secrets.REMOTE_HOST }} 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
+          rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@${{ secrets.HOST }}:/marketplace
+          ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
+          ssh user@${{ secrets.HOST }} 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
