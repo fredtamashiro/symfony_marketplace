@@ -20,15 +20,6 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, intl, pdo, pdo_mysql
 
-      - name: Instalar dependências do Composer
-        run: composer install --no-dev --optimize-autoloader
-
-      - name: Build frontend (opcional)
-        run: |
-          if [ -f package.json ]; then
-            npm install && npm run build
-          fi
-
   deploy-desenvolvimento:
     runs-on: ubuntu-latest
     environment: 
