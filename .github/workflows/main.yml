@@ -19,6 +19,16 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, intl, pdo, pdo_mysql
+
+      - name: Instalar dependências do Composer
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Build frontend (opcional)
+        run: |
+          if [ -f package.json ]; then
+            npm install && npm run build
+          fi
+
   deploy-desenvolvimento:
     runs-on: ubuntu-latest
     environment: 
@@ -26,14 +36,16 @@ jobs:
       url: https://marketplace.fredtamashiro.com.br
     needs: build
     steps:
-      - name: Hostgator Deploy
-        uses: easingthemes/SSH_PRIVATE_KEY-Deploy@v2
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_PORT: 2222
-          REMOTE_USER: ${{ secrets.USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc --delete"
-          SOURCE: "/"
-          TARGET: "/public_html/marketplace"
-          EXCLUDE: ".git*"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy para HostGator
+        run: |
+          rsync -avz --delete --exclude '.git' --exclude 'node_modules' --exclude 'vendor' ./ user@${{ secrets.REMOTE_HOST }}:/path/to/your/project
+          ssh user@${{ secrets.REMOTE_HOST }} 'cd /path/to/your/project && composer install --no-dev --optimize-autoloader'
+          ssh user@${{ secrets.REMOTE_HOST }} 'cd /path/to/your/project && php bin/console cache:clear --env=prod'
