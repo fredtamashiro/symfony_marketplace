@@ -27,7 +27,7 @@ jobs:
     needs: build
     steps:
       - name: Hostgator Deploy
-        uses: easingthemes/ssh-deploy@v2
+        uses: easingthemes/SSH_PRIVATE_KEY-Deploy@v2
         with:
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_PORT: 2222
